@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": false,
+        "target": "es6",
+        "jsx": "react",
+        "types": [
+            "reflect-metadata",
+            "node",
+            "inversify"
+        ],
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "outDir": "tmp",
+        "baseUrl": "src"
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

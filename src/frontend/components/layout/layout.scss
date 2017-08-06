@@ -1,0 +1,35 @@
+.layout {
+    min-width: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+.aside-menu-container {
+    display: block;
+    box-sizing: border-box;
+    width: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    min-height: 100%;
+    bottom: 0;
+}
+
+.aside-submenu-container {
+    box-sizing: border-box;
+    width: 250px;
+    position: absolute;
+    left: 100px;
+    top: 0;
+    min-height: 100%;
+    bottom: 0;
+}
+
+.body-container {
+    box-sizing: border-box;
+    position: absolute;
+    left: 350px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}

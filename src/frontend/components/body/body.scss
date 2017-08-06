@@ -1,0 +1,10 @@
+.body {
+    min-width: 100%;
+    min-height: 100%;
+    display: block;
+    box-sizing: border-box;
+    padding-top: 40px;
+    border-left: 1px solid rgba(0, 0, 0, 0.3);
+    box-shadow: inset 7px 0px 9px 7px rgba(100, 100, 100, 0.01), -1px 0px 0px rgba(100, 100, 100, 0.01), inset 1px 0px 0px rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+}
