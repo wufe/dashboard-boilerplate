@@ -1,3 +1,5 @@
+import { resolvePath } from "frontend/components/menu/menu-utils";
+
 export type PathResolverProperties = {
     title: string;
     selected: boolean;
@@ -28,9 +30,9 @@ export type MenuState = {
 };
 
 // Path resolver, called "path" for sake of simplicity
-export const path: PathResolver = ({title}) => `#${title}`;
+export const path: PathResolver = ({title}) => `/#${title}`;
 
-export const menuState: MenuState = {
+const menuState: MenuState = {
     home: {
         icon: 'MdHome',
         title: 'Home',
@@ -107,3 +109,55 @@ export const menuState: MenuState = {
         }
     }
 };
+
+let initialUrl = '/' + document.location.href.replace(/^(?:\/\/|[^\/]+)*\//, "");
+
+let selectedMenuItemKey: string;
+let selectedSubMenuItemKey: string;
+let foundSelection: boolean = false;
+
+for(let menuItemKey in menuState){
+    let menuItem = menuState[menuItemKey];
+    if(menuItem.selected && !selectedMenuItemKey)
+        selectedMenuItemKey = menuItemKey;
+
+    if(menuItem.subitems && Object.keys(menuItem.subitems).length){
+        for(let subMenuItemKey in menuItem.subitems){
+            let subMenuItem = menuItem.subitems[subMenuItemKey];
+            if(subMenuItem.selected && !selectedSubMenuItemKey)
+                selectedSubMenuItemKey = subMenuItemKey;
+
+            let { selected, title } = subMenuItem;
+            let path = resolvePath(subMenuItem.path, { title, selected });
+            if(path == initialUrl && !foundSelection){
+                foundSelection = true;
+                menuState[menuItemKey].subitems[subMenuItemKey].selected = true;
+                menuState[menuItemKey].selected = true;
+            }else{
+                menuState[menuItemKey].subitems[subMenuItemKey].selected = false;
+            }
+        }
+    }
+    
+    if(!foundSelection){
+        let { selected, title } = menuItem;
+        let path = resolvePath(menuItem.path, { title, selected });
+        if(path == initialUrl && !foundSelection){
+            foundSelection = true;
+            menuState[menuItemKey].selected = true;
+        }else{
+            menuState[menuItemKey].selected = false;
+        }
+    }
+}
+
+if(!foundSelection){
+    if(selectedSubMenuItemKey && selectedMenuItemKey){
+        menuState[selectedMenuItemKey].subitems[selectedSubMenuItemKey].selected = true;
+        menuState[selectedMenuItemKey].selected = true;
+    }else if(selectedMenuItemKey){
+        menuState[selectedMenuItemKey].selected = true;
+    }
+}
+
+export { menuState };

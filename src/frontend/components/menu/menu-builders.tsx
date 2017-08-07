@@ -1,4 +1,5 @@
 import * as React from "react";
+import { resolvePath } from 'frontend/components/menu/menu-utils';
 import { PathResolver, PathResolverProperties } from "frontend/components/menu";
 import { MenuItem } from 'frontend/components';
 import { withNavigation } from "frontend/components";
@@ -10,20 +11,6 @@ export type MenuItemProperties = {
     title: string;
     path?: string | PathResolver;
     props?: any;
-};
-
-export const resolvePath = (path: string | PathResolver, properties: PathResolverProperties) => {
-    switch(typeof path){
-        case 'string':
-            return path as string;
-        case 'function':
-            return (path as PathResolver)({
-                title: properties.title,
-                selected: properties.selected
-            });
-        default:
-            return undefined;
-    };
 };
 
 export const createMenuItem: <P, S>(

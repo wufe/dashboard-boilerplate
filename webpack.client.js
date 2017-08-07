@@ -1,4 +1,4 @@
-const { resolve } = require('path');
+const { resolve, join } = require('path');
 const { optimize, DefinePlugin, HashedModuleIdsPlugin, ProvidePlugin } = require('webpack');
 
 const production = process.env.NODE_ENV == 'production';
@@ -59,9 +59,9 @@ module.exports = {
     },
 
     output: {
-        publicPath: '/build',
+        publicPath: '/build/static',
         filename: production ? '[name].[chunkhash:8].js' : '[name].js',
-        path: resolve(__dirname, production ? 'dist' : 'build')
+        path: join(resolve(__dirname, production ? 'dist' : 'build'), 'static')
     },
 
     node: {
