@@ -1,13 +1,15 @@
-import { createConnection, ConnectionOptions } from 'typeorm';
-import { environment } from 'server/framework/environment';
+import { createConnection, ConnectionOptions, Connection } from 'typeorm';
+import { environment } from 'server/infrastructure/environment';
 import { inject, injectable } from "inversify";
 
 import * as Entities from 'server/infrastructure/database/entities';
-import { IOCTypes } from "server/framework/types";
+import { IOCTypes, MappingTypes } from "server/infrastructure/types";
 import { ILogger } from "server/utils";
 import { DatabaseLogger } from "server/infrastructure/database/logger";
-import { Collection } from "server/infrastructure/database/entities";
-import { IConnectionContainer } from "server/infrastructure/database/connectionContainer";
+import { Collection, User } from "server/infrastructure/database/entities";
+import { DatabaseContext } from "server/infrastructure/database/databaseContext";
+import { UserModel } from "domain/models";
+import { Mapper } from "server/infrastructure";
 
 export interface IConnectionBuilder {
     connect: () => void;
@@ -17,9 +19,13 @@ export interface IConnectionBuilder {
 export class ConnectionBuilder implements IConnectionBuilder{
 
     @inject(IOCTypes.ILogger) private _logger: ILogger;
-    @inject(IOCTypes.IConnectionContainer) private _connectionContainer: IConnectionContainer;
+    @inject(IOCTypes.DatabaseContext) private _databaseContext: DatabaseContext;
+    @inject(IOCTypes.Mapper) private _mapper: Mapper;
 
     connect = async () => {
+
+        this._logger.silly(`Connecting to ${environment.persistence.database}..`);
+
         const connectionOptions: ConnectionOptions = {
             type: 'sqlite',
             database: environment.persistence.database,
@@ -28,13 +34,35 @@ export class ConnectionBuilder implements IConnectionBuilder{
             logger: new DatabaseLogger(this._logger),
             synchronize: true,
             entities: [
-                Collection
+                Collection,
+                User
             ]
         };
 
         const connection = await createConnection(connectionOptions);
-        this._connectionContainer.setConnection(connection);
+        await this._seed(connection);
+        this._databaseContext.setConnection(connection);
     };
+
+    private _seed = async (connection: Connection) => {
+        const userRepository = connection.getRepository<User>(User);
+        let foundAdmin = await userRepository.findOneById(1);
+        if(!foundAdmin){
+            let userModel = new UserModel({
+                id: 1,
+                email: 'admin@admin.com',
+                password: 'admin',
+                username: 'admin'
+            });
+            let userEntity = this._mapper.map<UserModel, User>({
+                source: MappingTypes.UserModel,
+                destination: MappingTypes.UserEntity
+            }, userModel);
+            await userRepository.save(userEntity);
+        }
+            
+        this._logger.verbose('Seed completed.');
+    }
 
 }
 

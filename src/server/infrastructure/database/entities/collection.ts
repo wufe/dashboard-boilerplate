@@ -27,19 +27,3 @@ export class Collection{
     updatedAt: string;
     
 }
-
-
-// protected $fillable = [
-//     "name",
-//     "path",
-//     "status",
-//     "metadata",
-//     "issuer"
-// ];
-
-// protected $hidden = [
-//     "status",
-//     "metadata",
-//     "created_at",
-//     "updated_at"
-// ];

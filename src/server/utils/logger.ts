@@ -1,5 +1,5 @@
 import * as Winston from 'winston';
-import { environment } from "server/framework/environment";
+import { environment } from "server/infrastructure/environment";
 import { ensureDirectoryExists } from "server/utils";
 import { join } from "path";
 import * as Moment from 'moment';

@@ -16,7 +16,8 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "outDir": "tmp",
-        "baseUrl": "src"
+        "baseUrl": "src",
+        "inlineSources": true
     },
     "exclude": [
         "node_modules"

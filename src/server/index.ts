@@ -1,3 +1,3 @@
-import { Startup } from 'server/framework/startup';
+import { Startup } from 'server/application/startup';
 
 Startup();

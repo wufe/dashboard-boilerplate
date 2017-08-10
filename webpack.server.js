@@ -25,9 +25,9 @@ const plugins = production ? [
         mangle: true,
         beautify: true
     }),
-    new DefinePlugin({ "global.GENTLY": false })
+    new DefinePlugin({ "global.GENTLY": false, "global.TRANSPILED": true })
 ] : [
-    new DefinePlugin({ "global.GENTLY": false })
+    new DefinePlugin({ "global.GENTLY": false, "global.TRANSPILED": true })
 ];
 
 module.exports = {

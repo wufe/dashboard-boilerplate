@@ -7,6 +7,7 @@ export type EnvironmentKind = EnvironmentKindProduction | EnvironmentKindDevelop
 
 export type Environment = {
     kind: EnvironmentKind;
+    rootPath: string;
     logging: {
         path: string;
         level: CLILoggingLevel;
@@ -18,23 +19,41 @@ export type Environment = {
         host: string;
         port: number;
     };
+    authentication: {
+        jwt: {
+            secret: string;
+            algorithm: string;
+        };
+        bcrypt: {
+            rounds: number;
+        };
+    };
 };
 
 export const IOCTypes = {
     Environment: Symbol('Environment'),
     IHttpClient: Symbol('IHttpClient'),
     ILogger: Symbol('ILogger'),
+    Mapper: Symbol('Mapper'),
 
     IWorker: Symbol('IWorker'),
     IStartupWorker: Symbol('IStartupWorker'),
 
     IConnectionBuilder: Symbol('IConnectionBuilder'),
-    IConnectionContainer: Symbol('IConnectionContainer'),
-
     DatabaseContext: Symbol('DatabaseContext'),
+
+    IUserRepository: Symbol('IUserRepository'),
 
     IMainController: Symbol('IMainController'),
     ICollectionController: Symbol('ICollectionController'),
 
-    IWebServerService: Symbol('IWebServerService')
+    IAuthenticationService: Symbol('IAuthenticationService'),
+    IWebServerService: Symbol('IWebServerService'),
+
+    IAuthenticationMiddleware: Symbol('IAuthenticationMiddleware')
+};
+
+export const MappingTypes = {
+    UserEntity: Symbol('UserEntity'),
+    UserModel: Symbol('UserModel')
 };

@@ -1,20 +1,21 @@
-
+import { Connection, ObjectType } from "typeorm";
 import { injectable, inject } from "inversify";
-import { ConnectionContainer } from "server/infrastructure/database/connectionContainer";
-import { IOCTypes } from "server/framework/types";
+import { IOCTypes } from "server/infrastructure/types";
 import * as Entities from 'server/infrastructure/database/entities';
 
 @injectable()
 export class DatabaseContext{
 
-    @inject(IOCTypes.IConnectionContainer) private _connectionContainer: ConnectionContainer;
+    private _connection: Connection;
 
-    get = () => this._connectionContainer.getConnection().manager;
+    setConnection = (connection: Connection) => this._connection = connection;
+    
+    getConnection = () => this._connection;
 
-    getConnection = () => this._connectionContainer.getConnection();
+    get = () => this._connection.manager;
 
-    getEntityManager = () => this._connectionContainer.getConnection().entityManager;
+    getEntityManager = () => this._connection.entityManager;
 
-    getRepository = (entity: Function) => this._connectionContainer.getConnection().getRepository(entity);
+    getRepository = <T>(entity: ObjectType<T>) => this._connection.getRepository<T>(entity);
 
 }

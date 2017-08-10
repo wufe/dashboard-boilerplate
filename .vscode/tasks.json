@@ -1,0 +1,25 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "options": {
+        "cwd": "${workspaceRoot}"
+    },
+    "tasks": [{
+            "type": "shell",
+            "command": "yarn debug",
+            "taskName": "Debug",
+            "presentation": {
+                "echo": true,
+                "reveal": "never",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "type": "shell",
+            "command": "yarn run node-version",
+            "taskName": "Version"
+        }
+    ]
+}

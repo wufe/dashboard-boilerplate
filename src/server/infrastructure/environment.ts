@@ -1,6 +1,6 @@
-import {development as dev, production as prod} from 'configuration/settings';
+import {getDevelopmentEnvironment, getProductionEnvironment} from 'configuration/settings';
 
-import {Environment, EnvironmentKind, EnvironmentKindDevelopment, EnvironmentKindProduction} from 'server/framework/types';
+import {Environment, EnvironmentKind, EnvironmentKindDevelopment, EnvironmentKindProduction} from 'server/infrastructure/types';
 
 export const environmentKindProduction: EnvironmentKindProduction = 'production';
 export const environmentKindDevelopment: EnvironmentKindDevelopment = 'development';
@@ -8,7 +8,7 @@ export const environmentKindDevelopment: EnvironmentKindDevelopment = 'developme
 const getEnvironment: (kind: EnvironmentKind) => Environment =
     (kind) => {
         return kind == environmentKindDevelopment ?
-                dev : prod;
+                getDevelopmentEnvironment() : getProductionEnvironment();
     };
 
 export const env: EnvironmentKind =

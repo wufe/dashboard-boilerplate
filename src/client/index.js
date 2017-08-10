@@ -56,5 +56,3 @@ app.on('activate', () => {
         createWindow()
     }
 });
-
-app.disableHardwareAcceleration();

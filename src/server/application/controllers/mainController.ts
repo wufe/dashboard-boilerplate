@@ -1,5 +1,5 @@
 import { injectable, inject } from "inversify";
-import { IOCTypes } from "server/framework/types";
+import { IOCTypes } from "server/infrastructure/types";
 import { ILogger } from "server/utils";
 import { WebServerService, IWebServerService } from "server/application/services";
 

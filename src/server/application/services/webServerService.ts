@@ -1,14 +1,17 @@
 import { IApplicationService } from "server/application/services/applicationService";
 import { ICollectionController, CollectionController } from "server/application/controllers/api";
-import { IOCTypes, Environment } from "server/framework/types";
+import { IOCTypes, Environment } from "server/infrastructure/types";
 import { inject, injectable } from "inversify";
 import { createExpressServer, useContainer, RoutingControllersOptions, useExpressServer } from "routing-controllers";
-import { IOC } from "server/framework/ioc/iocContainer";
-import * as Express from 'express';
+import { IOC } from "server/infrastructure/ioc/iocContainer";
 import { ILogger, getDataDir, sanitizeFilename } from "server/utils";
 import { RequestHandler, Request, Response, NextFunction } from "express";
+import * as Express from 'express';
 import { join, basename, resolve, dirname } from "path";
 import { existsSync } from 'fs';
+import { IAuthenticationMiddleware } from "server/application/middlewares";
+import { json, urlencoded } from 'body-parser';
+import { UserModel } from "domain/models";
 
 export interface IWebServerService {
     start: () => void;
@@ -19,6 +22,8 @@ export class WebServerService implements IApplicationService, IWebServerService{
 
     @inject(IOCTypes.Environment) private _environment: Environment;
     @inject(IOCTypes.ILogger) private _logger: ILogger;
+
+    @inject(IOCTypes.IAuthenticationMiddleware) private _authenticationMiddleware: IAuthenticationMiddleware;
 
     private RE_FRONTEND = /^\/((?!((build\/)|(dist\/))?static\/?)(?!api\/?)).*$/i;
     private RE_STATICS = /^\/((build\/)|(dist\/))?static\/?(.*?)$/i;
@@ -34,10 +39,24 @@ export class WebServerService implements IApplicationService, IWebServerService{
         };
 
         const expressApp = Express();
-        expressApp.all(this.RE_FRONTEND, this._getFrontendHandler())
-        expressApp.all(this.RE_STATICS, this._getStaticsHandler());
+        
+        expressApp.use(json());
+        expressApp.use(urlencoded({
+            extended: true
+        }));
 
         const webServer = useExpressServer(expressApp, routingControllersOptions);
+
+        webServer.use(this._authenticationMiddleware.initialize());
+
+        webServer.all('/api/login', this._authenticationMiddleware.login());
+        webServer.get('/api/auth', this._authenticationMiddleware.authenticate(), (req, res, next) => {
+            this._logger.info(`[uID:${(req.user as UserModel).id}] Authentication succeeded.`, req.user);
+            res.send('authenticated');
+        });
+        webServer.all(this.RE_FRONTEND, this._getFrontendHandler())
+        webServer.all(this.RE_STATICS, this._getStaticsHandler());
+
         const { host, port } = this._environment.server;
         webServer.listen(port, host);
 
